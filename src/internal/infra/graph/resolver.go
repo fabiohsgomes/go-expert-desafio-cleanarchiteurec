@@ -1,6 +1,6 @@
 package graph
 
-import "github.com/devfullcycle/20-CleanArch/internal/usecase"
+import "github.com/fabiohsgomes/go-expert-desafio-cleanarchiteurec/internal/usecase"
 
 // This file will not be regenerated automatically.
 //

@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/devfullcycle/20-CleanArch/internal/entity"
-	"github.com/devfullcycle/20-CleanArch/internal/usecase"
-	"github.com/devfullcycle/20-CleanArch/pkg/events"
+	"github.com/fabiohsgomes/go-expert-desafio-cleanarchiteurec/internal/entity"
+	"github.com/fabiohsgomes/go-expert-desafio-cleanarchiteurec/internal/usecase"
+	"github.com/fabiohsgomes/go-expert-desafio-cleanarchiteurec/pkg/events"
 )
 
 type WebOrderHandler struct {

@@ -1,6 +1,6 @@
-module github.com/devfullcycle/20-CleanArch
+module github.com/fabiohsgomes/go-expert-desafio-cleanarchiteurec
 
-go 1.19
+go 1.23.8
 
 require (
 	github.com/99designs/gqlgen v0.17.22
@@ -11,7 +11,6 @@ require (
 	github.com/spf13/viper v1.14.0
 	github.com/streadway/amqp v1.0.0
 	github.com/stretchr/testify v1.8.1
-	github.com/vektah/gqlparser/v2 v2.5.1
 	google.golang.org/grpc v1.50.1
 	google.golang.org/protobuf v1.28.1
 )
@@ -38,6 +37,7 @@ require (
 	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/subosito/gotenv v1.4.1 // indirect
 	github.com/urfave/cli/v2 v2.8.1 // indirect
+	github.com/vektah/gqlparser/v2 v2.5.1 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4 // indirect
 	golang.org/x/net v0.0.0-20221014081412-f15817d10f9b // indirect

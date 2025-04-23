@@ -6,12 +6,12 @@ package main
 import (
 	"database/sql"
 
-	"github.com/devfullcycle/20-CleanArch/internal/entity"
-	"github.com/devfullcycle/20-CleanArch/internal/event"
-	"github.com/devfullcycle/20-CleanArch/internal/infra/database"
-	"github.com/devfullcycle/20-CleanArch/internal/infra/web"
-	"github.com/devfullcycle/20-CleanArch/internal/usecase"
-	"github.com/devfullcycle/20-CleanArch/pkg/events"
+	"github.com/fabiohsgomes/go-expert-desafio-cleanarchiteurec/internal/entity"
+	"github.com/fabiohsgomes/go-expert-desafio-cleanarchiteurec/internal/event"
+	"github.com/fabiohsgomes/go-expert-desafio-cleanarchiteurec/internal/infra/database"
+	"github.com/fabiohsgomes/go-expert-desafio-cleanarchiteurec/internal/infra/web"
+	"github.com/fabiohsgomes/go-expert-desafio-cleanarchiteurec/internal/usecase"
+	"github.com/fabiohsgomes/go-expert-desafio-cleanarchiteurec/pkg/events"
 	"github.com/google/wire"
 )
 
