@@ -4,14 +4,23 @@ import (
 	"database/sql"
 	"fmt"
 	"net"
+	"net/http"
+	"time"
 
+	graphql_handler "github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/handler/extension"
+	"github.com/99designs/gqlgen/graphql/handler/lru"
+	"github.com/99designs/gqlgen/graphql/handler/transport"
+	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/fabiohsgomes/go-expert-desafio-cleanarchiteurec/configs"
 	"github.com/fabiohsgomes/go-expert-desafio-cleanarchiteurec/internal/event/handler"
+	"github.com/fabiohsgomes/go-expert-desafio-cleanarchiteurec/internal/infra/graph"
 	"github.com/fabiohsgomes/go-expert-desafio-cleanarchiteurec/internal/infra/grpc/pb"
 	"github.com/fabiohsgomes/go-expert-desafio-cleanarchiteurec/internal/infra/grpc/service"
 	"github.com/fabiohsgomes/go-expert-desafio-cleanarchiteurec/internal/infra/web/webserver"
 	"github.com/fabiohsgomes/go-expert-desafio-cleanarchiteurec/pkg/events"
 	"github.com/streadway/amqp"
+	"github.com/vektah/gqlparser/v2/ast"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
@@ -38,15 +47,15 @@ func main() {
 		RabbitMQChannel: rabbitMQChannel,
 	})
 
-	createOrderUseCase := NewCreateOrderUseCase(db, eventDispatcher)
-	listOrderUseCase := NewListOrderUseCase(db)
-
 	webserver := webserver.NewWebServer(configs.WebServerPort)
 	webOrderHandler := NewWebOrderHandler(db, eventDispatcher)
-	webserver.AddHandler("POST", "/order", webOrderHandler.Create)
-	webserver.AddHandler("GET", "/order", webOrderHandler.List)
+	webserver.AddHandler(http.MethodPost, "/order", webOrderHandler.Create)
+	webserver.AddHandler(http.MethodGet, "/order", webOrderHandler.FindAll)
 	fmt.Println("Starting web server on port", configs.WebServerPort)
 	go webserver.Start()
+
+	createOrderUseCase := NewCreateOrderUseCase(db, eventDispatcher)
+	listOrderUseCase := NewListOrderUseCase(db)
 
 	grpcServer := grpc.NewServer()
 	createOrderService := service.NewOrderService(*createOrderUseCase, *listOrderUseCase)
@@ -60,14 +69,31 @@ func main() {
 	}
 	go grpcServer.Serve(lis)
 
-	// srv := graphql_handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{
-	// 	CreateOrderUseCase: *createOrderUseCase,
-	// }}))
-	// http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	// http.Handle("/query", srv)
+	srv := graphql_handler.New(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{
+		CreateOrderUseCase: createOrderUseCase,
+		ListOrderUseCase:   listOrderUseCase,
+	}}))
 
-	// fmt.Println("Starting GraphQL server on port", configs.GraphQLServerPort)
-	// http.ListenAndServe(":"+configs.GraphQLServerPort, nil)
+	srv.AddTransport(transport.Websocket{
+		KeepAlivePingInterval: 10 * time.Second,
+	})
+	srv.AddTransport(transport.Options{})
+	srv.AddTransport(transport.GET{})
+	srv.AddTransport(transport.POST{})
+	srv.AddTransport(transport.MultipartForm{})
+
+	srv.SetQueryCache(lru.New[*ast.QueryDocument](1000))
+
+	srv.Use(extension.Introspection{})
+	srv.Use(extension.AutomaticPersistedQuery{
+		Cache: lru.New[string](100),
+	})
+
+	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
+	http.Handle("/query", srv)
+
+	fmt.Println("Starting GraphQL server on port", configs.GraphQLServerPort)
+	http.ListenAndServe(":"+configs.GraphQLServerPort, nil)
 }
 
 func getRabbitMQChannel() *amqp.Channel {

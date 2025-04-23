@@ -7,5 +7,6 @@ import "github.com/fabiohsgomes/go-expert-desafio-cleanarchiteurec/internal/usec
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-	CreateOrderUseCase usecase.CreateOrderUseCase
+	CreateOrderUseCase *usecase.CreateOrderUseCase
+	ListOrderUseCase   *usecase.ListOrderUseCase
 }

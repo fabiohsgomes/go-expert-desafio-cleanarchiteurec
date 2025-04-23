@@ -48,7 +48,7 @@ func (h *WebOrderHandler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *WebOrderHandler) List(w http.ResponseWriter, r *http.Request) {
+func (h *WebOrderHandler) FindAll(w http.ResponseWriter, r *http.Request) {
 	listOrder := usecase.NewListOrderUseCase(h.OrderRepository)
 	orders, err := listOrder.Execute()
 	if err != nil {

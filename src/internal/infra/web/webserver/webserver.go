@@ -30,10 +30,22 @@ func (s *WebServer) AddHandler(method, path string, handler http.HandlerFunc) {
 // start the server
 func (s *WebServer) Start() {
 	s.Router.Use(middleware.Logger)
-	for method, mapItem := range s.Handlers {
-		for _, item := range mapItem {
-			for path, handler := range item {
-				s.Router.Method(method, path, handler)
+	
+	for method, handlers := range s.Handlers {
+		for _, handler := range handlers {
+			for path, fn := range handler {
+				switch method {
+				case http.MethodGet:
+					s.Router.Get(path, fn)
+				case http.MethodPost:
+					s.Router.Post(path, fn)
+				case http.MethodPut:
+					s.Router.Put(path, fn)
+				case http.MethodDelete:
+					s.Router.Delete(path, fn)
+				default:
+					s.Router.Method(method, path, fn)
+				}
 			}
 		}
 	}

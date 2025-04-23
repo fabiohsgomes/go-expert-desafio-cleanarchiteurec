@@ -2,31 +2,32 @@ package usecase
 
 import "github.com/fabiohsgomes/go-expert-desafio-cleanarchiteurec/internal/entity"
 
+
 type ListOrderUseCase struct {
 	OrderRepository entity.OrderRepositoryInterface
 }
 
-func NewListOrderUseCase(OrderRepository entity.OrderRepositoryInterface) *ListOrderUseCase {
+func NewListOrderUseCase(orderRepository entity.OrderRepositoryInterface) *ListOrderUseCase {
 	return &ListOrderUseCase{
-		OrderRepository: OrderRepository,
+		OrderRepository: orderRepository,
 	}
 }
 
-func (c *ListOrderUseCase) Execute() ([]OrderOutputDTO, error) {
-	orders, err := c.OrderRepository.FindAll()
+func (u *ListOrderUseCase) Execute() ([]*OrderOutputDTO, error) {
+	orders, err := u.OrderRepository.FindAll()
 	if err != nil {
 		return nil, err
 	}
 
-	dto := make([]OrderOutputDTO, len(orders))
-	for i, order := range orders {
-		dto[i] = OrderOutputDTO{
-			ID:         order.ID,
-			Price:      order.Price,
-			Tax:        order.Tax,
+	var orderOutputDTOs []*OrderOutputDTO
+	for _, order := range orders {
+		orderOutputDTOs = append(orderOutputDTOs, &OrderOutputDTO{
+			ID:     order.ID,
+			Price:  order.Price,
+			Tax:    order.Tax,
 			FinalPrice: order.FinalPrice,
-		}
+		})
 	}
 
-	return dto, nil
+	return orderOutputDTOs, nil
 }
