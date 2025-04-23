@@ -2,13 +2,9 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/ubuntu
 {
 	"name": "desafio-go",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"build":{
-		"context": ".",
-		"dockerfile": "Dockerfile"
-		// Use 'dockerComposeFile' to use a docker-compose.yml file.
-		// "dockerComposeFile": "docker-compose.yml",
-		// Use 'context' to specify the build context. More info: https://aka.ms/dev-containers-build-context
+	"build": {
+		"dockerfile": "Dockerfile",
+		"context": "."
 	},
 	"features": {
 		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
@@ -39,10 +35,4 @@
 		}
 	},
 	"postCreateCommand": "make go-install"
-
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
-
-	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
 }
