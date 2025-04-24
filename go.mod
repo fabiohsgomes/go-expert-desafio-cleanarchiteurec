@@ -7,7 +7,6 @@ require (
 	github.com/go-chi/chi/v5 v5.2.1
 	github.com/go-sql-driver/mysql v1.9.2
 	github.com/google/wire v0.6.0
-	github.com/hashicorp/golang-lru v1.0.2
 	github.com/mattn/go-sqlite3 v1.14.28
 	github.com/spf13/viper v1.20.1
 	github.com/streadway/amqp v1.1.0
