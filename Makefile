@@ -18,9 +18,11 @@ go-tidy:
 	go mod tidy
 	@echo "Go dependencies installed."
 go-run:
-	make go-tidy
 	make docker-up
+	make go-tidy
 	cd cmd/ordersystem && go run main.go wire_gen.go
+go-evans:
+	evans --proto internal/infra/grpc/protofiles/order.proto repl -p 50051
 grpc-gen:
 	protoc --go_out=. --go-grpc_out=. internal/infra/grpc/protofiles/order.proto
 migrate-create:
@@ -31,4 +33,4 @@ migrate-mysql-up:
 	go install -tags "mysql" github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 	migrate -path=internal/infra/database/migration -database "mysql://root:root@tcp(localhost:3306)/orders" -verbose up	
 	@echo "Migrations executed."	
-PHONY: go-install docker-up go-tidy go-run grpc-gen migrate-create migrate-mysql-up
+PHONY: go-install docker-up go-tidy go-run go-evans grpc-gen migrate-create migrate-mysql-up
