@@ -3,9 +3,9 @@ volumes:
     name: mysql-data
 
 services:
-  mysql:
+  mysql-server:
     image: mysql:5.7
-    container_name: mysql
+    container_name: mysql-server
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
@@ -15,10 +15,30 @@ services:
       - 3306:3306
     volumes:
       - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 2s
+      retries: 3
 
-  rabbitmq:
+  migrate:
+    image: migrate/migrate
+    container_name: migrate
+    depends_on:
+      mysql-server:
+        condition: service_healthy
+    volumes:
+      - ./internal/infra/database/migration:/migrations
+    command: [
+      "-path",
+      "/migrations/",
+      "-database",
+      "mysql://root:root@tcp(mysql-server:3306)/orders",
+      "up",
+    ]
+  
+  rabbitmq-server:
     image: rabbitmq:3-management
-    container_name: rabbitmq
+    container_name: rabbitmq-server
     restart: always
     ports:
       - 5672:5672
@@ -26,3 +46,24 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  orders:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: orders-system
+    restart: always
+    ports:
+      - 8080:8080
+      - 8000:8000
+      - 50051:50051
+    depends_on:
+      mysql-server:
+        condition: service_healthy
+      rabbitmq-server:
+        condition: service_healthy
