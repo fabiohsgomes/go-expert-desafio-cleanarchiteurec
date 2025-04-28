@@ -26,17 +26,9 @@ O projeto está usando tecnologia devcontainer para subir um ambiente de desenvo
 
 Estando no container de desenvolvimento, será necessário executar os seguintes passos:
 
-- Executar os containers do MySQL e do HabbitMq:
+- Executar os containers do MySQL, RabbitMq e APIs:
 ```bash
 make docker-up
-```
-- Implantar as migrações:
-```bash
-make migrate-mysql-up
-```
-- Rodar as APIs:
-```bash
-make go-run
 ```
 
 Os endpoints para ciar e listar as orders tanto na API Rest (porta 8000) quanto na API GraphQL (porta 8080), estão no arquivo api/order.http. A pasta api encontra-se na rapiz do projeto.
