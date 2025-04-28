@@ -28,13 +28,7 @@ services:
         condition: service_healthy
     volumes:
       - ./internal/infra/database/migration:/migrations
-    command: [
-      "-path",
-      "/migrations/",
-      "-database",
-      "mysql://root:root@tcp(mysql-server:3306)/orders",
-      "up",
-    ]
+    command: ["-path", "/migrations/", "-database", "mysql://root:root@tcp(mysql-server:3306)/orders", "up"]
   
   rabbitmq-server:
     image: rabbitmq:3-management
@@ -58,6 +52,8 @@ services:
       dockerfile: Dockerfile
     container_name: orders-system
     restart: always
+    environment:
+      - AMBIENTE=P
     ports:
       - 8080:8080
       - 8000:8000
